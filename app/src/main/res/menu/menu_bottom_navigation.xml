@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_timeline"
+        android:enabled="true"
+        android:icon="@drawable/home_selector"
+        android:title="Home"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_search"
+        android:enabled="true"
+        android:icon="@drawable/instagram_home_outline_24"
+        android:title="Home"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_create"
+        android:enabled="true"
+        android:icon="@drawable/post_selector"
+        android:title="Create"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_notifications"
+        android:enabled="true"
+        android:icon="@drawable/mentions_selector"
+        android:title="Heart"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_profile"
+        android:enabled="true"
+        android:icon="@drawable/user_selector"
+        android:title="Profile"
+        app:showAsAction="ifRoom" />
+</menu>
