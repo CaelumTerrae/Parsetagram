@@ -21,17 +21,24 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.parse.ParseException;
+import com.parse.ParseFile;
+import com.parse.ParseUser;
+import com.parse.SaveCallback;
+
 import java.io.File;
+import java.io.IOException;
 
 import me.caelumterrae.parsetagram.fragments.CameraFragment;
 import me.caelumterrae.parsetagram.fragments.ProfileFragment;
 import me.caelumterrae.parsetagram.fragments.TimelineFragment;
 
-public class MainActivity extends AppCompatActivity implements TimelineFragment.OnFragmentInteractionListener, CameraFragment.OnFragmentInteractionListener, ProfileFragment.OnFragmentInteractionListener{
+public class MainActivity extends AppCompatActivity implements TimelineFragment.OnFragmentInteractionListener, CameraFragment.OnFragmentInteractionListener, ProfileFragment.OnFragmentInteractionListener, ProfileFragment.ProfileInteractionListener{
 
 
     public final String APP_TAG = "MyCustomApp";
     public final static int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1034;
+    public final static int PICK_PHOTO_CODE = 1046;
     public String photoFileName = "photo.jpg";
     File photoFile;
 
@@ -76,10 +83,6 @@ public class MainActivity extends AppCompatActivity implements TimelineFragment.
                         fragmentTransactionProfile.replace(R.id.placeholder, profileFragment).commit();
                         Toast.makeText(MainActivity.this, "on profile", Toast.LENGTH_LONG).show();
                         // do something here
-                        return true;
-                    case R.id.action_notifications:
-                        return true;
-                    case R.id.action_search:
                         return true;
                     default:
                         return true;
@@ -155,6 +158,43 @@ public class MainActivity extends AppCompatActivity implements TimelineFragment.
                 Toast.makeText(this, "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
             }
         }
+        if (requestCode == PICK_PHOTO_CODE) {
+            if (data != null) {
+                Uri photoUri = data.getData();
+                // Do something with the photo based on Uri
+                Bitmap selectedImage = null;
+                try {
+                    selectedImage = MediaStore.Images.Media.getBitmap(this.getContentResolver(), photoUri);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                // Load the selected image into a preview
+                File file = new File(photoUri.getPath());
+                final ParseFile parseFile = new ParseFile(file);
+
+                parseFile.saveInBackground(new SaveCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        ParseUser user = ParseUser.getCurrentUser();
+                        user.put("profilepic", parseFile);
+                        user.saveInBackground(new SaveCallback() {
+                            @Override
+                            public void done(ParseException e) {
+                                if (e==null) {
+                                    Toast.makeText(MainActivity.this, "saved profile picture correctly", Toast.LENGTH_LONG).show();
+                                }else{
+                                    Toast.makeText(MainActivity.this, "failure to save profile picture", Toast.LENGTH_LONG).show();
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+                    }
+                });
+
+
+                ((ProfileFragment)profileFragment).ivProfile.setImageBitmap(selectedImage);
+            }
+        }
     }
 
     public void getSettings(MenuItem mi){
@@ -163,7 +203,15 @@ public class MainActivity extends AppCompatActivity implements TimelineFragment.
     }
 
 
-
-
-
+    @Override
+    public void onProfileClick() {
+        Intent intent = new Intent(Intent.ACTION_PICK,
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        // If you call startActivityForResult() using an intent that no app can handle, your app will crash.
+        // So as long as the result is not null, it's safe to use the intent.
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            // Bring up gallery to select a photo
+            startActivityForResult(intent, PICK_PHOTO_CODE);
+        }
+    }
 }

@@ -118,6 +118,7 @@ public class TimelineFragment extends Fragment {
         //Testing rn by adding fake posts to posts arraylist
         ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
         query.setLimit(20);
+        query.orderByDescending("createdAt");
         query.findInBackground(new FindCallback<Post>() {
             @Override
             public void done(List<Post> objects, ParseException e) {

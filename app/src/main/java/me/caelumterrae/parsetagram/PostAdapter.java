@@ -12,7 +12,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.parse.GetCallback;
+import com.parse.ParseException;
+import com.parse.ParseFile;
+import com.parse.ParseObject;
+import com.parse.ParseUser;
+
+import org.ocpsoft.prettytime.PrettyTime;
+import org.parceler.Parcels;
+
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -40,16 +51,45 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         Post post = posts.get(position);
 
         //TODO: set all of the properties of the post here.
         //e.g. update the images and text and everything
         String username = post.getUsername();
         holder.tvUsername.setText(username);
-        holder.tvDescription.setText(post.getDescription().toString());
+        holder.tvDescription.setText("@" + username + " " + post.getDescription().toString());
         holder.ivPicture.setParseFile(post.getMedia());
         holder.ivPicture.loadInBackground();
+
+
+        PrettyTime p = new PrettyTime();
+        Date date = post.getCreatedAt();
+        holder.tvCreatedAt.setText(p.format(date));
+
+        //get the profile pictures by loading users
+        post.fetchInBackground(new GetCallback<ParseObject>() {
+            @Override
+            public void done(ParseObject object, ParseException e) {
+                if(e == null){
+                    ParseUser user = (ParseUser) object.get("user");
+                    user.fetchInBackground(new GetCallback<ParseObject>() {
+                        @Override
+                        public void done(ParseObject object, ParseException e) {
+                            if (e == null){
+                                ParseFile profilepic = object.getParseFile("profilepic");
+                                holder.ivProfile.setParseFile(profilepic);
+                                holder.ivProfile.loadInBackground();
+                            }else{
+                                Toast.makeText(context, "failed to get profile picture", Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    });
+                }else{
+                    Toast.makeText(context, "failed to get user", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
     }
 
     @Override
@@ -62,6 +102,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         public com.parse.ParseImageView ivPicture;
         public TextView tvUsername;
         public TextView tvDescription;
+        public TextView tvCreatedAt;
 
 
         public ViewHolder(View itemView){
@@ -70,12 +111,16 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             tvDescription = itemView.findViewById(R.id.tvDescription);
             ivPicture = itemView.findViewById(R.id.ivPicture);
             ivProfile = itemView.findViewById(R.id.ivProfile);
+            tvCreatedAt = itemView.findViewById(R.id.tvCreatedAt);
             itemView.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View view) {
             Intent i = new Intent(context, DetailsActivity.class);
+            int position = getAdapterPosition();
+            Post post = posts.get(position);
+            i.putExtra("post", Parcels.wrap(post));
             context.startActivity(i);
         }
     }

@@ -39,4 +39,7 @@ dependencies {
     implementation 'com.parse:parseui-widget-android:0.0.2'
     implementation "com.android.support:appcompat-v7:${supportLibVersion}"
     implementation "com.android.support:design:${supportLibVersion}"
+    implementation 'org.parceler:parceler-api:1.1.6'
+    annotationProcessor 'org.parceler:parceler:1.1.6'
+    implementation 'org.ocpsoft.prettytime:prettytime:4.0.1.Final'
 }

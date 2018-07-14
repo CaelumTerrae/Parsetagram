@@ -9,6 +9,8 @@ import com.parse.ParseUser;
 public class Post extends ParseObject {
     //TODO: add proper variables to POST object
 
+    public Post(){}
+
     public ParseFile getMedia() {
         return getParseFile("media");
     }
@@ -48,4 +50,5 @@ public class Post extends ParseObject {
     public String getUserID(){
         return getString("userID");
     }
+
 }

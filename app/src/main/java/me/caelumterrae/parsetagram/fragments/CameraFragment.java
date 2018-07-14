@@ -35,13 +35,11 @@ import me.caelumterrae.parsetagram.models.Post;
 public class CameraFragment extends Fragment {
 
     public ImageView ivPicture;
-    public Button btnCapture;
     public Button btnPost;
     public EditText etDescription;
     public final String APP_TAG = "MyCustomApp";
     public Boolean photoTaken;
     public String photoFileName = "photo.jpg";
-    public File photoFile;
 
     private OnFragmentInteractionListener mListener;
 
@@ -120,14 +118,17 @@ public class CameraFragment extends Fragment {
                 ParseFile parseFile = new ParseFile(photoFile);
                 Post post = new Post();
 
-                post.setMedia(parseFile);
 
+                // Setting the fields of the postclass
+                post.setMedia(parseFile);
                 String description = etDescription.getText().toString();
                 post.setDescription(description);
                 ParseUser user = ParseUser.getCurrentUser();
                 post.setUser(user);
                 post.setUsername(user.get("username").toString());
 
+
+                //
                 post.saveInBackground(new SaveCallback() {
                     @Override
                     public void done(com.parse.ParseException e) {
@@ -140,7 +141,6 @@ public class CameraFragment extends Fragment {
                     }
                 });
             }
-
         }
     }
 

@@ -9,12 +9,6 @@
         android:title="Home"
         app:showAsAction="ifRoom" />
 
-    <item
-        android:id="@+id/action_search"
-        android:enabled="true"
-        android:icon="@drawable/instagram_home_outline_24"
-        android:title="Home"
-        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/action_create"
@@ -23,12 +17,6 @@
         android:title="Create"
         app:showAsAction="ifRoom" />
 
-    <item
-        android:id="@+id/action_notifications"
-        android:enabled="true"
-        android:icon="@drawable/mentions_selector"
-        android:title="Heart"
-        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/action_profile"
